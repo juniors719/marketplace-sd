@@ -1,0 +1,147 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║           DIAGRAMA DE CLASSES - SISTEMA DE MARKETPLACE                   ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         HIERARQUIA DE CLASSES                           │
+└─────────────────────────────────────────────────────────────────────────┘
+
+                            ┌─────────────────┐
+                            │   ItemVenda     │  <<abstract>>
+                            ├─────────────────┤
+                            │ - id: String    │
+                            │ - nome: String  │
+                            │ - descricao: S  │
+                            │ - preco: double │
+                            ├─────────────────┤
+                            │ + getters/set   │
+                            │ + obterInfo()   │  <<abstract>>
+                            └────────┬────────┘
+                                     │
+                    ┌────────────────┼────────────────┐
+                    │                │                │
+            ┌───────▼──────┐  ┌──────▼──────┐  ┌────▼────────────┐
+            │ProdutoFisico │  │   Servico   │  │ ProdutoDigital  │
+            ├──────────────┤  ├─────────────┤  ├─────────────────┤
+            │- peso        │  │- duracaoEst │  │- formatoArquivo │
+            │- dimensoes   │  │- tipo       │  │- linkDownload   │
+            │- estoque     │  └─────────────┘  │- dataValidade   │
+            └──────────────┘                   └─────────────────┘
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                              INTERFACE                                  │
+└─────────────────────────────────────────────────────────────────────────┘
+
+            ┌──────────────────────────────┐
+            │  <<interface>>               │
+            │  CarrinhoDeCompras           │
+            ├──────────────────────────────┤
+            │ + adicionarItem()            │
+            │ + removerItem()              │
+            │ + calcularTotal()            │
+            │ + finalizarCompra()          │
+            │ + obterItens()               │
+            │ + limparCarrinho()           │
+            └──────────────┬───────────────┘
+                           │
+                           │ implements
+                           │
+            ┌──────────────▼───────────────┐
+            │  CarrinhoDeComprasImpl       │
+            ├──────────────────────────────┤
+            │ - itens: Map                 │
+            │ - finalizado: boolean        │
+            ├──────────────────────────────┤
+            │ + adicionarItem()            │
+            │ + removerItem()              │
+            │ + calcularTotal()            │
+            │ + finalizarCompra()          │
+            │ + obterItens()               │
+            │ + limparCarrinho()           │
+            └──────────────────────────────┘
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        AGREGAÇÃO - LOJA                                 │
+└─────────────────────────────────────────────────────────────────────────┘
+
+            ┌──────────────────────────────┐
+            │         Loja                 │
+            ├──────────────────────────────┤
+            │ - id: String                 │
+            │ - nome: String               │
+            │ - endereco: String           │
+            │ - catalogo: List<ItemVenda>  │◇────┐
+            │ - catalogoPorId: Map         │      │
+            ├──────────────────────────────┤      │ Agregação
+            │ + adicionarItem()            │      │ (tem muitos)
+            │ + removerItem()              │      │
+            │ + buscarItem()               │      │
+            │ + obterCatalogo()            │      │
+            │ + listarCatalogo()           │      │
+            └──────────────────────────────┘      │
+                                                  │
+                                    ┌─────────────▼────────┐
+                                    │    ItemVenda         │
+                                    └──────────────────────┘
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                   CONCEITOS DE POO DEMONSTRADOS                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+1. HERANÇA (Inheritance)
+   └─ ItemVenda é superclasse abstrata
+   └─ ProdutoFisico, Servico, ProdutoDigital herdam de ItemVenda
+
+2. POLIMORFISMO (Polymorphism)
+   └─ Método obterInformacoes() implementado de forma específica em cada classe
+   └─ Tratamento uniforme de diferentes tipos através da superclasse
+
+3. ENCAPSULAMENTO (Encapsulation)
+   └─ Atributos privados
+   └─ Acesso controlado via getters/setters
+
+4. ABSTRAÇÃO (Abstraction)
+   └─ ItemVenda define contrato comum
+   └─ CarrinhoDeCompras define interface de operações
+
+5. AGREGAÇÃO (Aggregation)
+   └─ Loja "tem muitos" ItemVenda
+   └─ Itens podem existir independentemente da loja
+
+6. INTERFACE (Interface)
+   └─ CarrinhoDeCompras define contrato
+   └─ CarrinhoDeComprasImpl fornece implementação concreta
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        FLUXO DE USO                                     │
+└─────────────────────────────────────────────────────────────────────────┘
+
+1. Criar Loja
+   └─ Instanciar classe Loja com ID, nome e endereço
+
+2. Criar Itens de Venda
+   ├─ ProdutoFisico (produtos tangíveis)
+   ├─ Servico (serviços como entrega)
+   └─ ProdutoDigital (vouchers, ingressos)
+
+3. Popular Catálogo
+   └─ Adicionar itens ao catálogo da loja
+
+4. Criar Carrinho
+   └─ Instanciar CarrinhoDeComprasImpl
+
+5. Adicionar ao Carrinho
+   └─ Adicionar itens do catálogo ao carrinho
+
+6. Finalizar Compra
+   ├─ Calcular total
+   └─ Finalizar compra
+
+
+═══════════════════════════════════════════════════════════════════════════
+                     FIM DO DIAGRAMA DE CLASSES
+═══════════════════════════════════════════════════════════════════════════
